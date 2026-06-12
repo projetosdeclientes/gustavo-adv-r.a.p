@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Método R.A.P. — Marketing Jurídico para Advogados do Interior</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #1A3A5C;
+      --bg: #F9F7F4;
+      --accent: #C8963E;
+      --fg: #2E2E2E;
+      --white: #FFFFFF;
+      --placeholder-bg: #FFF9C4;
+      --photo-placeholder: #D4C5A9;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--fg);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .font-display { font-family: var(--font-display); }
+    .bg-primary { background: var(--primary); }
+    .bg-warm { background: var(--bg); }
+    .bg-white { background: var(--white); }
+    .text-primary { color: var(--primary); }
+    .text-accent { color: var(--accent); }
+    .text-fg { color: var(--fg); }
+    .text-muted { color: #999; }
+    .text-white { color: var(--white); }
+    .border-accent { border-color: var(--accent); }
+
+    .section-padding { padding: 80px 0; }
+    @media (max-width: 767px) { .section-padding { padding: 60px 0; } }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 420ms ease-out, transform 420ms ease-out;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .method-card {
+      perspective: 1200px;
+    }
+    .method-step {
+      opacity: 0;
+      transform: rotateY(90deg);
+      transition: transform 600ms cubic-bezier(0.23, 1, 0.32, 1), opacity 600ms cubic-bezier(0.23, 1, 0.32, 1), background 250ms ease, transform 250ms ease;
+    }
+    .method-step.revealed {
+      opacity: 1;
+      transform: rotateY(0deg);
+    }
+    .method-step.hover-active:hover {
+      transform: scale(1.04) translateY(-6px);
+      background: rgba(200, 150, 62, 0.12) !important;
+    }
+    .method-step.fade-siblings {
+      opacity: 0.7;
+    }
+
+    .accent-line {
+      height: 2px;
+      background: var(--accent);
+      width: 0;
+      transition: width 800ms ease;
+      margin-top: 24px;
+    }
+    .accent-line.animated { width: 100%; }
+
+    .ba-right {
+      opacity: 0;
+      transform: translateX(30px);
+      transition: opacity 500ms ease, transform 500ms ease;
+    }
+    .ba-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: var(--fg);
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 16px 32px;
+      transition: background 200ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-accent:hover {
+      background: #B4862E;
+    }
+    .btn-accent-large {
+      font-size: 18px;
+      padding: 18px 40px;
+    }
+
+    .btn-ghost-accent {
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      border-radius: 6px;
+      padding: 14px 28px;
+      font-weight: 600;
+      transition: background 200ms ease, color 200ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .btn-ghost-accent:hover {
+      background: var(--accent);
+      color: var(--fg);
+    }
+
+    .whatsapp-float {
+      display: none;
+    }
+    @media (max-width: 767px) {
+      .whatsapp-float {
+        display: flex;
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 50;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--accent);
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        transition: background 200ms ease;
+        cursor: pointer;
+      }
+      .whatsapp-float:hover { background: #B4862E; }
+      .whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+    }
+
+    @media (max-width: 767px) {
+      .hero-title { font-size: 32px !important; line-height: 1.15 !important; }
+      .section-title { font-size: 28px !important; }
+      body { font-size: 15px; }
+      .btn-accent { min-height: 52px; }
+    }
+
+    .placeholder-data {
+      background: var(--placeholder-bg);
+      display: inline;
+      padding: 2px 4px;
+    }
+
+    .photo-block {
+      background: var(--photo-placeholder);
+      width: 100%;
+      max-width: 400px;
+      height: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    @media (max-width: 767px) {
+      .photo-block {
+        max-width: 100%;
+        height: 260px;
+      }
+    }
+
+    .photo-block-sm {
+      background: var(--photo-placeholder);
+      width: 300px;
+      height: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    @media (max-width: 767px) {
+      .photo-block-sm {
+        width: 100%;
+        height: 260px;
+      }
+    }
+
+    .blockquote-line {
+      width: 3px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── SECTION 1: HERO ─── -->
+  <section class="section-padding bg-primary" data-od-id="hero">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <div class="flex-1 text-center lg:text-left">
+          <h1 class="hero-title font-display text-white font-bold" style="font-size:48px; line-height:1.08; letter-spacing:-0.02em;">
+            Advogados do interior merecem uma estratégia real.
+          </h1>
+          <p class="hero-sub text-white mt-6 text-lg" style="opacity:0.85; line-height:1.7; max-width:54ch;">
+            Com o Método R.A.P., construímos relevância, autoridade e uma fonte previsível de novos clientes — na sua cidade, para a sua realidade.
+          </p>
+          <div class="mt-8">
+            <a href="https://wa.me/5511999999999" target="_blank" rel="noopener" class="btn-accent">
+              💬 Quero conversar sobre meu escritório
+            </a>
+          </div>
+          <p class="text-white mt-4 text-sm" style="opacity:0.5;">
+            Sem compromisso. Sem promessa de centenas de leads.
+          </p>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="photo-block" aria-label="Placeholder de foto do Gustavo">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" opacity="0.7">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            <span style="color:#E8E0D0; font-size:12px; margin-top:8px; font-family:Inter, sans-serif;">[Foto de Gustavo — a inserir]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 2: DOR ─── -->
+  <section class="section-padding bg-warm" data-od-id="dor">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <h2 class="section-title font-display text-primary font-bold text-center" style="font-size:36px; margin-bottom:56px;">
+        A realidade do advogado no interior
+      </h2>
+      <div class="grid md:grid-cols-2 gap-12 md:gap-16">
+        <div>
+          <h3 class="font-bold text-lg mb-6 text-primary">Você provavelmente vive isso:</h3>
+          <ul class="space-y-4" style="color:#2E2E2E;">
+            <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Dependência excessiva de indicações.</li>
+            <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Presença digital inconsistente.</li>
+            <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Tentativas frustradas com impulsionamento.</li>
+            <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Falta de previsibilidade na entrada de clientes.</li>
+            <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Estratégias genéricas que ignoram a realidade local.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg mb-6 text-primary">E continua ouvindo promessas de:</h3>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">⚠️</span> Centenas de leads.</li>
+            <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">⚠️</span> Crescimento acelerado.</li>
+            <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">⚠️</span> Fórmulas prontas.</li>
+            <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">⚠️</span> Resultados rápidos sem base.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 3: HISTÓRIA ─── -->
+  <section class="section-padding bg-white" data-od-id="historia">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-start gap-10 md:gap-14">
+        <div class="flex-shrink-0 mx-auto md:mx-0">
+          <div class="photo-block-sm" aria-label="Placeholder de foto do Gustavo">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" opacity="0.7">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            <span style="color:#E8E0D0; font-size:12px; margin-top:8px; font-family:Inter, sans-serif;">[Foto de Gustavo — a inserir]</span>
+          </div>
+        </div>
+        <div class="flex gap-4 flex-1">
+          <div class="blockquote-line" style="min-height:200px;"></div>
+          <div>
+            <h2 class="font-display italic font-bold text-primary" style="font-size:32px; line-height:1.2;">
+              "Eu também passei por isso."
+            </h2>
+            <div class="mt-6 space-y-4 text-fg" style="font-size:17px; line-height:1.7; max-width:60ch;">
+              <p>Sou advogado. E durante muito tempo procurei soluções que prometiam crescimento para escritórios de advocacia. Mas percebi que a maioria das estratégias era construída para realidades completamente diferentes da minha — falavam sobre grandes equipes, centenas de leads, departamentos comerciais. Ignoravam quem constrói sua advocacia em cidades pequenas e médias.</p>
+              <p>Foi desanimador ver fórmulas prontas que jamais funcionariam no dia a dia de um escritório do interior. Foi aí que decidi construir um caminho diferente: um método desenhado por um advogado, para advogados que enfrentam os mesmos desafios que eu enfrentei.</p>
+              <p class="font-bold">Foi assim que nasceu o Método R.A.P.</p>
+            </div>
+            <p class="mt-6 text-sm" style="color:#999;">
+              <span class="placeholder-data" data-placeholder="true">há mais de 5 anos</span> de experiência na advocacia.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 4: MÉTODO R.A.P. ─── -->
+  <section class="section-padding bg-primary" id="metodo" data-od-id="metodo">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <h2 class="font-display text-white font-bold text-center section-title" style="font-size:36px; margin-bottom:8px;">
+        Método R.A.P.
+      </h2>
+      <p class="text-white text-center mb-14" style="opacity:0.6; font-size:15px; letter-spacing:0.06em; text-transform:uppercase;">
+        Relevância · Autoridade · Prospecção
+      </p>
+      <div class="method-card grid md:grid-cols-3 gap-px" style="background:rgba(255,255,255,0.15);">
+        <div class="method-step p-8 md:p-10" data-step="0" style="background:var(--primary);" data-od-id="metodo-r">
+          <div class="font-display font-bold" style="font-size:clamp(48px, 5vw, 64px); line-height:1; color:#C8963E;">R</div>
+          <h3 class="text-white font-bold mt-4" style="font-size:22px;">Relevância</h3>
+          <div style="height:2px; background:#C8963E; width:40px; margin:14px 0;"></div>
+          <p class="text-white" style="opacity:0.7; font-size:16px; line-height:1.6;">Criar presença digital que posicione você como referência na sua região.</p>
+          <ul class="mt-5 space-y-2 text-sm" style="color:rgba(255,255,255,0.6);">
+            <li>→ Diagnóstico de posicionamento</li>
+            <li>→ Estruturação de canais digitais</li>
+            <li>→ Conteúdo estratégico regional</li>
+          </ul>
+        </div>
+        <div class="method-step p-8 md:p-10" data-step="1" style="background:var(--primary);" data-od-id="metodo-a">
+          <div class="font-display font-bold" style="font-size:clamp(48px, 5vw, 64px); line-height:1; color:#C8963E;">A</div>
+          <h3 class="text-white font-bold mt-4" style="font-size:22px;">Autoridade</h3>
+          <div style="height:2px; background:#C8963E; width:40px; margin:14px 0;"></div>
+          <p class="text-white" style="opacity:0.7; font-size:16px; line-height:1.6;">Construir credibilidade para que clientes certos busquem você antes dos concorrentes.</p>
+          <ul class="mt-5 space-y-2 text-sm" style="color:rgba(255,255,255,0.6);">
+            <li>→ Produção de conteúdo de autoridade</li>
+            <li>→ Presença em comunidades locais</li>
+            <li>→ Prova social estruturada</li>
+          </ul>
+        </div>
+        <div class="method-step p-8 md:p-10" data-step="2" style="background:var(--primary);" data-od-id="metodo-p">
+          <div class="font-display font-bold" style="font-size:clamp(48px, 5vw, 64px); line-height:1; color:#C8963E;">P</div>
+          <h3 class="text-white font-bold mt-4" style="font-size:22px;">Prospecção</h3>
+          <div style="height:2px; background:#C8963E; width:40px; margin:14px 0;"></div>
+          <p class="text-white" style="opacity:0.7; font-size:16px; line-height:1.6;">Sistema previsível de captação de novos clientes adaptado à sua realidade.</p>
+          <ul class="mt-5 space-y-2 text-sm" style="color:rgba(255,255,255,0.6);">
+            <li>→ Funil de captação regional</li>
+            <li>→ Gestão de relacionamento</li>
+            <li>→ Indicadores e otimização</li>
+          </ul>
+        </div>
+      </div>
+      <div class="accent-line" style="max-width:80%; margin-left:auto; margin-right:auto;"></div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 5: ENTREGÁVEIS ─── -->
+  <section class="section-padding bg-warm" data-od-id="entregaveis">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <h2 class="section-title font-display text-primary font-bold text-center" style="font-size:36px; margin-bottom:12px;">
+        O que você recebe ao contratar
+      </h2>
+      <p class="text-center mb-12" style="color:#666; font-size:17px;">
+        Tudo o que você precisa para construir uma presença digital que gera resultados reais.
+      </p>
+      <div class="grid md:grid-cols-2 gap-x-14 gap-y-4 max-w-4xl mx-auto" style="font-size:17px;">
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Diagnóstico completo do escritório</div>
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Definição de posicionamento</div>
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Estruturação da presença digital</div>
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Planejamento estratégico de conteúdo</div>
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Organização da jornada do cliente</div>
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Estratégia de captação</div>
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Gestão de tráfego</div>
+        <div class="flex items-start gap-3 py-1"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Reuniões estratégicas periódicas</div>
+        <div class="flex items-start gap-3 py-1 md:col-span-2 md:justify-center"><span style="color:#C8963E; flex-shrink:0; margin-top:2px;">✅</span> Acompanhamento dos indicadores</div>
+      </div>
+      <div class="text-center mt-12">
+        <button class="btn-ghost-accent" onclick="revealMetodo()">
+          Entender como funciona o Método R.A.P. →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 6: ANTES E DEPOIS ─── -->
+  <section class="section-padding" data-od-id="antes-depois" style="padding-bottom:0;">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <h2 class="section-title font-display text-primary font-bold text-center" style="font-size:36px; margin-bottom:56px;">
+        O que muda após a implementação
+      </h2>
+    </div>
+    <div class="flex flex-col md:flex-row">
+      <div class="flex-1 px-6 lg:px-16 py-14 bg-warm">
+        <h3 class="font-bold mb-6" style="font-size:22px; color:#666;">Antes</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Dependência total de indicações</li>
+          <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Presença digital sem direção</li>
+          <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Resultados imprevisíveis</li>
+          <li class="flex items-start gap-3"><span style="color:#999; flex-shrink:0;">❌</span> Concorrência local tomando espaço</li>
+        </ul>
+      </div>
+      <div class="flex-1 px-6 lg:px-16 py-14 ba-right bg-primary">
+        <h3 class="font-bold mb-6" style="font-size:22px; color:var(--accent);">Depois</h3>
+        <ul class="space-y-4" style="color:var(--white);">
+          <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">✅</span> Fluxo previsível de novos clientes</li>
+          <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">✅</span> Autoridade reconhecida na região</li>
+          <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">✅</span> Presença digital estratégica</li>
+          <li class="flex items-start gap-3"><span style="color:#C8963E; flex-shrink:0;">✅</span> Seu escritório como referência local</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 7: PARA QUEM É ─── -->
+  <section class="section-padding bg-white" data-od-id="para-quem">
+    <div class="max-w-2xl mx-auto px-6" style="text-align:center;">
+      <h2 class="section-title font-display text-primary font-bold" style="font-size:36px; margin-bottom:48px;">
+        Para quem é o Método R.A.P.
+      </h2>
+      <ul class="space-y-5" style="font-size:18px;">
+        <li class="flex items-center justify-center gap-3"><span style="color:#C8963E; font-weight:700;">✔</span> Advogados autônomos</li>
+        <li class="flex items-center justify-center gap-3"><span style="color:#C8963E; font-weight:700;">✔</span> Escritórios em fase de crescimento</li>
+        <li class="flex items-center justify-center gap-3"><span style="color:#C8963E; font-weight:700;">✔</span> Profissionais que atuam no interior</li>
+        <li class="flex items-center justify-center gap-3"><span style="color:#C8963E; font-weight:700;">✔</span> Quem deseja construir autoridade regional</li>
+        <li class="flex items-center justify-center gap-3"><span style="color:#C8963E; font-weight:700;">✔</span> Quem busca previsibilidade na captação de clientes</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 8: DIFERENCIAL ─── -->
+  <section class="section-padding bg-warm" data-od-id="diferencial">
+    <div class="max-w-4xl mx-auto px-6">
+      <h2 class="section-title font-display text-primary font-bold text-center" style="font-size:36px; margin-bottom:40px;">
+        Por que somos diferentes das agências tradicionais?
+      </h2>
+      <div class="space-y-5" style="font-size:17px; line-height:1.8; max-width:680px; margin:0 auto;">
+        <p>Agências tradicionais vendem pacotes. Nós construímos estratégia. Enquanto a maioria promete resultados acelerados com fórmulas genéricas, o Método R.A.P. parte de um diagnóstico real do seu escritório, da sua cidade, da sua concorrência.</p>
+        <p>Não trabalhamos com departamento comercial — trabalhamos com posicionamento. Não entregamos relatórios vazios — entregamos um plano de crescimento executável.</p>
+        <p>Somos advogados entendendo de advogados. Sabemos o que funciona no interior porque é de onde viemos.</p>
+        <div class="pt-4" style="text-align:center;">
+          <p class="font-display italic font-bold" style="color:#C8963E; font-size:24px; line-height:1.3;">
+            "Não vendemos campanhas. Construímos oportunidade de crescimento."
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 9: PROVA SOCIAL ─── -->
+  <section class="section-padding bg-warm" data-od-id="prova-social" style="padding-top:0;">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <h2 class="section-title font-display text-primary font-bold text-center" style="font-size:36px; margin-bottom:48px;">
+        Escritórios que já mudaram com o Método R.A.P.
+      </h2>
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div style="border:1.5px dashed #C8963E; border-radius:4px; padding:32px; background:var(--white);">
+          <span class="font-display font-bold" style="font-size:48px; line-height:0.8; color:#C8963E;">"</span>
+          <p class="mt-1" style="font-size:16px; line-height:1.65;">
+            <span class="placeholder-data" data-placeholder="true">Antes do Método R.A.P., meu escritório dependia 100% de indicações. Em poucos meses, comecei a receber clientes que me encontravam pelo conteúdo que publiquei. A mudança foi completa.</span>
+          </p>
+          <p class="mt-4 font-bold" style="font-size:14px;"><span class="placeholder-data" data-placeholder="true">Dr. Carlos Mendes</span> · <span class="placeholder-data" data-placeholder="true">Direito Civil · Ribeirão Preto/SP</span></p>
+        </div>
+        <div style="border:1.5px dashed #C8963E; border-radius:4px; padding:32px; background:var(--white);">
+          <span class="font-display font-bold" style="font-size:48px; line-height:0.8; color:#C8963E;">"</span>
+          <p class="mt-1" style="font-size:16px; line-height:1.65;">
+            <span class="placeholder-data" data-placeholder="true">Sempre achei que marketing jurídico não funcionava para escritórios pequenos. O Método R.A.P. me mostrou que o problema não era o tamanho do escritório — era a falta de uma estratégia certa.</span>
+          </p>
+          <p class="mt-4 font-bold" style="font-size:14px;"><span class="placeholder-data" data-placeholder="true">Dra. Juliana Oliveira</span> · <span class="placeholder-data" data-placeholder="true">Direito Trabalhista · São José do Rio Preto/SP</span></p>
+        </div>
+      </div>
+      <p class="text-center mt-10 font-semibold" style="font-size:18px; color:#1A3A5C;">
+        <span class="placeholder-data" data-placeholder="true">Mais de 30 escritórios atendidos</span> · <span class="placeholder-data" data-placeholder="true">em 12 cidades do interior</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 10: CTA FINAL ─── -->
+  <section class="bg-primary" data-od-id="cta-final" style="padding:80px 0; text-align:center;">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="font-display text-white font-bold" style="font-size:40px; line-height:1.12; letter-spacing:-0.02em;">
+        Se você acredita que seu escritório tem potencial para crescer, vamos conversar.
+      </h2>
+      <p class="text-white mt-6 text-lg" style="opacity:0.8; line-height:1.6;">
+        Uma reunião estratégica. A gente entende o seu mercado antes de qualquer estratégia.
+      </p>
+      <div class="mt-8">
+        <a href="https://wa.me/5511999999999" target="_blank" rel="noopener" class="btn-accent" style="font-size:18px; padding:18px 40px;">
+          💬 Agendar conversa estratégica
+        </a>
+      </div>
+      <p class="text-white mt-4" style="opacity:0.5; font-size:14px;">
+        Uma conversa. Sem compromisso. Sem promessa de centenas de leads.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer style="padding:32px 0; text-align:center; background:var(--fg);">
+    <div class="max-w-4xl mx-auto px-6">
+      <p style="color:rgba(255,255,255,0.5); font-size:14px; line-height:1.8;">
+        Método R.A.P. — Consultoria de Marketing Jurídico
+        <span class="hidden md:inline"> · </span>
+        <br class="md:hidden" />
+        <span class="placeholder-data" data-placeholder="true">OAB [número — placeholder]</span>
+        <span class="hidden md:inline"> · </span>
+        <br class="md:hidden" />
+        <span class="placeholder-data" data-placeholder="true">[Cidade — placeholder]</span>
+        <span> · © 2025</span>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ─── WHATSAPP FLOAT ─── -->
+  <a href="https://wa.me/5511999999999" target="_blank" rel="noopener" class="whatsapp-float" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var revealObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.reveal').forEach(function(el) {
+        revealObserver.observe(el);
+      });
+
+      var metodoSection = document.getElementById('metodo');
+      var methodSteps = document.querySelectorAll('.method-step');
+      var connectorLine = document.querySelector('.accent-line');
+      var metodoAnimated = false;
+
+      function animateMetodo() {
+        if (metodoAnimated) return;
+        metodoAnimated = true;
+        methodSteps.forEach(function(step, i) {
+          setTimeout(function() { step.classList.add('revealed'); }, i * 220);
+        });
+        setTimeout(function() {
+          if (connectorLine) connectorLine.classList.add('animated');
+        }, methodSteps.length * 220 + 300);
+      }
+
+      var metodoObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting && !metodoAnimated) animateMetodo();
+        });
+      }, { threshold: 0.18 });
+      if (metodoSection) metodoObserver.observe(metodoSection);
+
+      window.revealMetodo = function() {
+        var target = document.getElementById('metodo');
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(function() {
+            if (metodoAnimated) {
+              methodSteps.forEach(function(s) { s.classList.remove('revealed'); });
+              if (connectorLine) connectorLine.classList.remove('animated');
+              metodoAnimated = false;
+            }
+            animateMetodo();
+          }, 500);
+        }
+      };
+
+      var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      methodSteps.forEach(function(step) {
+        var activate = function() {
+          methodSteps.forEach(function(s) { if (s !== step) s.classList.add('fade-siblings'); });
+        };
+        var deactivate = function() {
+          methodSteps.forEach(function(s) { s.classList.remove('fade-siblings'); });
+        };
+        if (!isTouch) {
+          step.addEventListener('mouseenter', activate);
+          step.addEventListener('mouseleave', deactivate);
+        } else {
+          step.addEventListener('click', function() {
+            if (step.classList.contains('fade-siblings')) { deactivate(); } else { deactivate(); activate(); }
+          });
+        }
+      });
+
+      var baPanel = document.querySelector('.ba-right');
+      if (baPanel) {
+        var baObs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              setTimeout(function() { baPanel.classList.add('visible'); }, 350);
+              baObs.unobserve(baPanel);
+            }
+          });
+        }, { threshold: 0.12 });
+        baObs.observe(baPanel);
+      }
+    });
+  </script>
+</body>
+</html>
