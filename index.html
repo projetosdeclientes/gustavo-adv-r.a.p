@@ -1619,10 +1619,23 @@
         var anim = el.getAttribute('data-anim');
         if (charAnimTypes.indexOf(anim) !== -1) {
           var text = el.textContent;
+          var words = text.split(' ');
           var html = '';
-          for (var ci = 0; ci < text.length; ci++) {
-            var delay = (ci * 0.05) + 's';
-            html += '<span class="char" style="animation-delay:' + delay + '">' + text[ci] + '</span>';
+          var charIdx = 0;
+          for (var wi = 0; wi < words.length; wi++) {
+            var word = words[wi];
+            var wordHtml = '';
+            for (var ci = 0; ci < word.length; ci++) {
+              var delay = (charIdx * 0.05) + 's';
+              wordHtml += '<span class="char" style="animation-delay:' + delay + '">' + word[ci] + '</span>';
+              charIdx++;
+            }
+            if (wi < words.length - 1) {
+              var spaceDelay = (charIdx * 0.05) + 's';
+              wordHtml += '<span class="char" style="animation-delay:' + spaceDelay + '">&nbsp;</span>';
+              charIdx++;
+            }
+            html += '<span style="white-space:nowrap">' + wordHtml + '</span>';
           }
           el.innerHTML = html;
         }
